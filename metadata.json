@@ -1,0 +1,6 @@
+{
+  "name": "Điều Phối DVC Siêu Tốc",
+  "description": "Hệ thống truy cập nhanh thủ tục hành chính, nộp hồ sơ trực tuyến, quản lý tiến độ thời gian thực và quản trị báo cáo chi tiết.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
