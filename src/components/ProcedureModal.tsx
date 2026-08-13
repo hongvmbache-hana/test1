@@ -13,17 +13,27 @@ interface ProcedureModalProps {
   procedures: ProcedureItem[];
   onClose: () => void;
   onStartSubmission: (procedure: ProcedureItem) => void;
+  initialProcedureId?: string | null;
 }
 
 export const ProcedureModal: React.FC<ProcedureModalProps> = ({
   category,
   procedures,
   onClose,
-  onStartSubmission
+  onStartSubmission,
+  initialProcedureId
 }) => {
   const [selectedProcId, setSelectedProcId] = useState<string | null>(
-    procedures.length > 0 ? procedures[0].id : null
+    initialProcedureId || (procedures.length > 0 ? procedures[0].id : null)
   );
+
+  React.useEffect(() => {
+    if (initialProcedureId) {
+      setSelectedProcId(initialProcedureId);
+    } else if (procedures.length > 0) {
+      setSelectedProcId(procedures[0].id);
+    }
+  }, [initialProcedureId, category, procedures]);
 
   if (!category) return null;
 

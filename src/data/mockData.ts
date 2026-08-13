@@ -201,6 +201,94 @@ export const SAMPLE_PROCEDURES: ProcedureItem[] = [
     ],
     description: 'Đăng ký xét duyệt hồ sơ cấp chứng chỉ môi giới BĐS cho cá nhân tham gia thị trường.',
     targetUrl: 'https://dichvucong.quangninh.gov.vn/portaldvc/DVC/1.009981'
+  },
+  {
+    id: 'proc-6',
+    code: '1.003112',
+    categoryId: 'cat-19',
+    categoryName: 'HỘ TỊCH',
+    title: 'Cấp Phiếu lý lịch tư pháp cho công dân Việt Nam, người nước ngoài đang cư trú tại Việt Nam',
+    department: 'Sở Tư pháp tỉnh Quảng Ninh',
+    level: 'Toàn trình',
+    slaDays: 10,
+    fee: 200000,
+    requiredDocuments: [
+      'Tờ khai yêu cầu cấp Phiếu lý lịch tư pháp',
+      'Bản chụp Căn cước công dân / Hộ chiếu'
+    ],
+    description: 'Cấp Phiếu lý lịch tư pháp số 1 và số 2 trực tuyến cho công dân làm thủ tục du học, xin việc, định cư.',
+    targetUrl: 'https://dichvucong.quangninh.gov.vn/portaldvc/DVC/1.003112'
+  },
+  {
+    id: 'proc-7',
+    code: '1.002341',
+    categoryId: 'cat-2',
+    categoryName: 'BẢO HIỂM XÃ HỘI',
+    title: 'Cấp lại sổ Bảo hiểm xã hội, thẻ Bảo hiểm y tế do hỏng, mất',
+    department: 'Bảo hiểm xã hội tỉnh Quảng Ninh',
+    level: 'Toàn trình',
+    slaDays: 3,
+    fee: 0,
+    requiredDocuments: [
+      'Tờ khai tham gia, điều chỉnh thông tin BHXH, BHYT (Mẫu TK1-TS)',
+      'Bản chụp CCCD/VNeID mức 2'
+    ],
+    description: 'Đăng ký cấp lại sổ BHXH hoặc thẻ BHYT trực tuyến nhanh chóng, nhận thẻ BHYT điện tử trên VssID.',
+    targetUrl: 'https://dichvucong.gov.vn/p/home/dvc-chi-tiet-thu-tuc-nghenh.html?ma_thu_tuc=1.002341'
+  },
+  {
+    id: 'proc-8',
+    code: '1.001188',
+    categoryId: 'cat-11',
+    categoryName: 'ĐƯỜNG BỘ',
+    title: 'Đổi Giấy phép lái xe do ngành Giao thông vận tải cấp (GPLX Ô tô, Xe máy)',
+    department: 'Sở Giao thông Vận tải tỉnh Quảng Ninh',
+    level: 'Toàn trình',
+    slaDays: 5,
+    fee: 135000,
+    requiredDocuments: [
+      'Bản quét Giấy khám sức khỏe lái xe điện tử',
+      'Bản chụp GPLX hiện tại và CCCD',
+      'File ảnh chân dung 3x4 nền trắng'
+    ],
+    description: 'Đổi giấy phép lái xe ô tô, xe máy trực tuyến toàn trình, nhận bằng lái mới tận nhà qua bưu điện.',
+    targetUrl: 'https://dichvucong.gov.vn/p/home/dvc-chi-tiet-thu-tuc-nghenh.html?ma_thu_tuc=1.001188'
+  },
+  {
+    id: 'proc-9',
+    code: '1.006734',
+    categoryId: 'cat-9',
+    categoryName: 'ĐĂNG KÝ BIỆN PHÁP BẢO ĐẢM',
+    title: 'Đăng ký biện pháp bảo đảm bằng quyền sử dụng đất, tài sản gắn liền với đất',
+    department: 'Văn phòng Đăng ký đất đai - Sở Tài nguyên & Môi trường',
+    level: 'Một phần',
+    slaDays: 1,
+    fee: 80000,
+    requiredDocuments: [
+      'Đơn yêu cầu đăng ký biện pháp bảo đảm',
+      'Hợp đồng thế chấp quyền sử dụng đất',
+      'Giấy chứng nhận QSD đất (Sổ đỏ / Sổ hồng)'
+    ],
+    description: 'Thủ tục thế chấp, giao dịch bảo đảm ngân hàng đối với bất động sản, quyền sử dụng đất.',
+    targetUrl: 'https://dichvucong.quangninh.gov.vn/portaldvc/DVC/1.006734'
+  },
+  {
+    id: 'proc-10',
+    code: '1.005118',
+    categoryId: 'cat-6',
+    categoryName: 'CÔNG CHỨNG',
+    title: 'Công chứng hợp đồng chuyển nhượng, mua bán, tặng cho quyền sử dụng đất, nhà ở',
+    department: 'Phòng Công chứng / Văn phòng Công chứng',
+    level: 'Một phần',
+    slaDays: 2,
+    fee: 250000,
+    requiredDocuments: [
+      'Dự thảo hợp đồng giao dịch',
+      'CCCD/Hộ chiếu của các bên',
+      'Giấy chứng nhận QSD đất và tài sản'
+    ],
+    description: 'Nộp hồ sơ xem xét và hẹn lịch công chứng hợp đồng mua bán, chuyển nhượng nhà đất trực tuyến.',
+    targetUrl: 'https://dichvucong.quangninh.gov.vn/portaldvc/DVC/1.005118'
   }
 ];
 

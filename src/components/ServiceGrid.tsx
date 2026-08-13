@@ -12,9 +12,13 @@ import {
   CheckCircle2,
   Filter,
   Layers,
-  Sparkles
+  Sparkles,
+  FileText,
+  Building2,
+  ExternalLink,
+  Globe
 } from 'lucide-react';
-import { ProcedureCategory } from '../types';
+import { ProcedureCategory, ProcedureItem } from '../types';
 import { CategoryIcon } from './CategoryIcon';
 
 interface ServiceGridProps {
@@ -28,6 +32,10 @@ interface ServiceGridProps {
   onSelectFilter: (filter: string) => void;
   isCustomizerOpen?: boolean;
   setIsCustomizerOpen?: (open: boolean) => void;
+  procedures?: ProcedureItem[];
+  matchingProcedures?: ProcedureItem[];
+  onSelectProcedure?: (proc: ProcedureItem, category?: ProcedureCategory) => void;
+  onClearSearch?: () => void;
 }
 
 export const ServiceGrid: React.FC<ServiceGridProps> = ({
@@ -40,13 +48,22 @@ export const ServiceGrid: React.FC<ServiceGridProps> = ({
   selectedFilter,
   onSelectFilter,
   isCustomizerOpen: externalCustomizerOpen,
-  setIsCustomizerOpen: setExternalCustomizerOpen
+  setIsCustomizerOpen: setExternalCustomizerOpen,
+  procedures = [],
+  matchingProcedures = [],
+  onSelectProcedure,
+  onClearSearch
 }) => {
   const [internalCustomizerOpen, setInternalCustomizerOpen] = useState(false);
   const [tempSelectedIds, setTempSelectedIds] = useState<Set<string>>(new Set());
   const [modalSearchTerm, setModalSearchTerm] = useState('');
 
   const isCustomizerOpen = externalCustomizerOpen || internalCustomizerOpen;
+
+  const handleOpenTargetUrl = (url?: string) => {
+    const target = url || 'https://dichvucong.gov.vn';
+    window.open(target, '_blank', 'noopener,noreferrer');
+  };
 
   // Sync state when customizer opens
   const openCustomizerModal = () => {
@@ -170,6 +187,114 @@ export const ServiceGrid: React.FC<ServiceGridProps> = ({
               Khôi phục mặc định
             </button>
           </div>
+        </div>
+      )}
+
+      {/* DEDICATED PROCEDURE SEARCH RESULTS SECTION */}
+      {searchQuery.trim() !== '' && (
+        <div className="bg-gradient-to-br from-red-50/70 via-white to-amber-50/50 dark:from-slate-900 dark:via-slate-900/90 dark:to-slate-900 border-2 border-red-200 dark:border-red-900/60 rounded-3xl p-5 shadow-sm space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-red-200/80 dark:border-red-900/60 pb-3">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-red-700 text-white rounded-2xl shadow-sm">
+                <Search className="w-5 h-5 text-amber-300" />
+              </div>
+              <div>
+                <h3 className="text-sm sm:text-base font-black text-slate-900 dark:text-white uppercase tracking-tight flex items-center gap-2 flex-wrap">
+                  <span>KẾT QUẢ TÌM KIẾM THỦ TỤC HÀNH CHÍNH CỤ THỂ</span>
+                  <span className="px-3 py-0.5 bg-red-700 text-amber-200 rounded-full text-xs font-bold border border-red-800">
+                    {matchingProcedures.length} thủ tục phù hợp
+                  </span>
+                </h3>
+                <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
+                  Từ khóa: <strong className="text-red-700 dark:text-red-400">"{searchQuery}"</strong> — tìm chính xác tên, mã số thủ tục, cơ quan xử lý & mô tả
+                </p>
+              </div>
+            </div>
+
+            {onClearSearch && (
+              <button
+                onClick={onClearSearch}
+                className="px-3 py-1.5 bg-white dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-950 text-slate-600 dark:text-slate-300 hover:text-red-700 font-bold rounded-xl text-xs border border-slate-200 dark:border-slate-700 transition flex items-center gap-1 shadow-2xs"
+              >
+                <X className="w-3.5 h-3.5" />
+                <span>Xóa từ khóa tìm kiếm</span>
+              </button>
+            )}
+          </div>
+
+          {matchingProcedures.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {matchingProcedures.map((proc) => {
+                const parentCat = allAdminCategories.find((c) => c.id === proc.categoryId);
+                return (
+                  <div
+                    key={proc.id}
+                    className="p-4 bg-white dark:bg-slate-800/90 rounded-2xl border border-red-200 dark:border-slate-700 hover:border-red-600 dark:hover:border-red-500 transition-all shadow-2xs hover:shadow-md flex flex-col justify-between space-y-3"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between gap-2 mb-2 flex-wrap">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[11px] font-mono font-bold px-2 py-0.5 bg-red-100 dark:bg-red-950 text-red-800 dark:text-red-300 rounded border border-red-300 dark:border-red-800">
+                            Mã: {proc.code}
+                          </span>
+                          <span className="text-[11px] font-bold px-2 py-0.5 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 rounded border border-emerald-300 dark:border-emerald-800">
+                            ⚡ {proc.level}
+                          </span>
+                        </div>
+                        <span className="text-[11px] font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded">
+                          📁 {proc.categoryName}
+                        </span>
+                      </div>
+
+                      <h4
+                        onClick={() => onSelectProcedure && onSelectProcedure(proc, parentCat)}
+                        className="text-sm font-extrabold text-slate-900 dark:text-slate-100 leading-snug cursor-pointer hover:text-red-700 dark:hover:text-red-400 transition-colors"
+                      >
+                        {proc.title}
+                      </h4>
+
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 line-clamp-2 leading-relaxed">
+                        {proc.description}
+                      </p>
+
+                      <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-700 flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 font-medium">
+                        <Building2 className="w-3.5 h-3.5 text-red-700 shrink-0" />
+                        <span className="truncate">{proc.department}</span>
+                      </div>
+                    </div>
+
+                    <div className="pt-2.5 flex items-center justify-between gap-2 border-t border-slate-100 dark:border-slate-700">
+                      <button
+                        onClick={() => onSelectProcedure && onSelectProcedure(proc, parentCat)}
+                        className="px-3 py-2 bg-red-50 hover:bg-red-100 dark:bg-red-950/80 dark:hover:bg-red-900 text-red-800 dark:text-red-200 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
+                      >
+                        <FileText className="w-3.5 h-3.5" />
+                        <span>Xem chi tiết & Nộp hồ sơ</span>
+                      </button>
+
+                      <button
+                        onClick={() => handleOpenTargetUrl(proc.targetUrl)}
+                        className="px-3 py-2 bg-red-700 hover:bg-red-800 text-white rounded-xl text-xs font-bold transition shadow-2xs flex items-center gap-1.5"
+                        title="Truy cập trực tiếp đường dẫn điều phối gửi hồ sơ"
+                      >
+                        <span>Mở trang điều phối</span>
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="p-6 bg-white dark:bg-slate-800 rounded-2xl border border-amber-200 dark:border-slate-700 text-center space-y-1">
+              <p className="text-xs font-bold text-slate-700 dark:text-slate-200">
+                Không tìm thấy danh sách thủ tục hành chính cụ thể có tên hoặc mã khớp với từ khóa "{searchQuery}"
+              </p>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                Bạn có thể tham khảo danh sách các Lĩnh vực thủ tục bên dưới hoặc thử lại với các từ khóa ngắn như "1.002891", "khai sinh", "xây dựng", "lý lịch", "trợ cấp".
+              </p>
+            </div>
+          )}
         </div>
       )}
 

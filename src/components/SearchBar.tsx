@@ -22,6 +22,17 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     { id: 'popular', label: '🔥 Phổ biến' }
   ];
 
+  const searchSuggestions = [
+    '1.002891',
+    'Trích lục hộ tịch',
+    'Giấy phép xây dựng',
+    'Lý lịch tư pháp',
+    'Trợ cấp thất nghiệp',
+    'Chứng thực bản sao',
+    'Đổi giấy phép lái xe',
+    'Bảo hiểm xã hội'
+  ];
+
   return (
     <div className="relative overflow-hidden bg-amber-50/60 dark:bg-slate-900 border-b border-amber-200/60 dark:border-slate-800 py-8 px-4 shadow-inner">
       {/* Background Image Layer (Traditional Dong Son Drum Motif Banner) */}
@@ -45,13 +56,14 @@ export const SearchBar: React.FC<SearchBarProps> = ({
             type="text"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Nhập mã hoặc tên thủ tục hành chính để tìm kiếm..."
+            placeholder="Tìm chính xác Tên thủ tục hành chính, Mã số thủ tục (ví dụ: 1.002891, Khai sinh, Xây dựng...)"
             className="w-full py-4 px-2 text-sm text-slate-900 dark:text-slate-100 bg-transparent focus:outline-none placeholder:text-slate-400 font-semibold"
           />
           {searchQuery && (
             <button
               onClick={() => onSearchChange('')}
               className="px-2 text-xs text-slate-400 hover:text-slate-600 font-bold"
+              title="Xóa từ khóa"
             >
               ✕
             </button>
@@ -62,22 +74,39 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           </button>
         </div>
 
-        {/* Quick Filter Tags (Centered under search bar) */}
-        <div className="flex items-center justify-center pt-1 text-xs">
-          <div className="flex flex-wrap items-center justify-center gap-2">
-            {quickFilters.map((f) => (
+        {/* Search Suggestions & Quick Filters */}
+        <div className="space-y-2 text-center">
+          <div className="flex flex-wrap items-center justify-center gap-1.5 text-xs text-slate-600 dark:text-slate-300">
+            <span className="font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1 mr-1">
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Gợi ý tìm nhanh:
+            </span>
+            {searchSuggestions.map((sug) => (
               <button
-                key={f.id}
-                onClick={() => onSelectFilter(f.id)}
-                className={`px-5 py-2 rounded-xl font-bold transition-all backdrop-blur-xs text-xs sm:text-sm ${
-                  selectedFilter === f.id
-                    ? 'bg-red-700 text-white font-extrabold shadow-sm border border-red-800'
-                    : 'bg-white/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700 border border-slate-200/80 dark:border-slate-700 shadow-2xs'
-                }`}
+                key={sug}
+                onClick={() => onSearchChange(sug)}
+                className="px-2.5 py-1 rounded-lg bg-white/80 dark:bg-slate-800/80 hover:bg-red-50 dark:hover:bg-red-950 hover:text-red-700 dark:hover:text-red-300 border border-slate-200/80 dark:border-slate-700 font-medium text-[11px] transition shadow-2xs"
               >
-                {f.label}
+                {sug}
               </button>
             ))}
+          </div>
+
+          <div className="flex items-center justify-center pt-1 text-xs">
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              {quickFilters.map((f) => (
+                <button
+                  key={f.id}
+                  onClick={() => onSelectFilter(f.id)}
+                  className={`px-5 py-2 rounded-xl font-bold transition-all backdrop-blur-xs text-xs sm:text-sm ${
+                    selectedFilter === f.id
+                      ? 'bg-red-700 text-white font-extrabold shadow-sm border border-red-800'
+                      : 'bg-white/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700 border border-slate-200/80 dark:border-slate-700 shadow-2xs'
+                  }`}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -85,4 +114,5 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     </div>
   );
 };
+
 

@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   INITIAL_CATEGORIES,
   SAMPLE_PROCEDURES,
   INITIAL_DOSSIERS,
   INITIAL_NOTIFICATIONS
 } from './data/mockData';
+import { matchSearchQuery } from './utils/searchUtils';
 import {
   UserRole,
   ProcedureCategory,
@@ -108,6 +109,7 @@ export default function App() {
 
   // Modals & Drawers
   const [selectedCategoryModal, setSelectedCategoryModal] = useState<ProcedureCategory | null>(null);
+  const [selectedInitialProcedureIdModal, setSelectedInitialProcedureIdModal] = useState<string | null>(null);
   const [procedureToSubmit, setProcedureToSubmit] = useState<ProcedureItem | null>(null);
   const [isSecurityModalOpen, setIsSecurityModalOpen] = useState<boolean>(false);
   const [isSupportModalOpen, setIsSupportModalOpen] = useState<boolean>(false);
@@ -252,8 +254,22 @@ export default function App() {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  // Filtering Categories
+  // Filtering Procedures & Categories
   const allAdminCategories = categories.filter((c) => c.enabled !== false);
+
+  // Calculate matching procedures based on search query
+  const matchingProcedures = useMemo(() => {
+    if (!searchQuery.trim()) return [];
+    return procedures.filter((p) => {
+      return (
+        matchSearchQuery(p.title, searchQuery) ||
+        matchSearchQuery(p.code, searchQuery) ||
+        matchSearchQuery(p.description, searchQuery) ||
+        matchSearchQuery(p.department, searchQuery) ||
+        matchSearchQuery(p.categoryName, searchQuery)
+      );
+    });
+  }, [procedures, searchQuery]);
 
   const filteredCategories = categories.filter((cat) => {
     // Hide disabled categories from citizen portal (configured by admin)
@@ -264,12 +280,21 @@ export default function App() {
       return false;
     }
 
-    const matchesSearch =
-      cat.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      cat.code.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    if (selectedFilter === 'popular') return matchesSearch && cat.popular;
-    return matchesSearch;
+    if (!searchQuery.trim()) {
+      if (selectedFilter === 'popular') return cat.popular;
+      return true;
+    }
+
+    // Match directly by category name/code OR matching any procedure inside this category
+    const matchesCatDirect =
+      matchSearchQuery(cat.name, searchQuery) || matchSearchQuery(cat.code, searchQuery);
+
+    const hasMatchingProcedure = matchingProcedures.some((p) => p.categoryId === cat.id);
+
+    const matches = matchesCatDirect || hasMatchingProcedure;
+
+    if (selectedFilter === 'popular') return matches && cat.popular;
+    return matches;
   });
 
   const unreadCount = notifications.filter((n) => !n.read).length;
@@ -328,12 +353,23 @@ export default function App() {
                 allAdminCategories={allAdminCategories}
                 userCustomCategoryIds={userCustomCategoryIds}
                 onSaveUserCustomCategories={handleSaveUserCustomCategories}
-                onSelectCategory={(cat) => setSelectedCategoryModal(cat)}
+                onSelectCategory={(cat) => {
+                  setSelectedCategoryModal(cat);
+                  setSelectedInitialProcedureIdModal(null);
+                }}
                 searchQuery={searchQuery}
                 selectedFilter={selectedFilter}
                 onSelectFilter={setSelectedFilter}
                 isCustomizerOpen={isCategoryCustomizerOpen}
                 setIsCustomizerOpen={setIsCategoryCustomizerOpen}
+                procedures={procedures}
+                matchingProcedures={matchingProcedures}
+                onSelectProcedure={(proc, parentCat) => {
+                  const cat = parentCat || categories.find((c) => c.id === proc.categoryId) || null;
+                  setSelectedCategoryModal(cat);
+                  setSelectedInitialProcedureIdModal(proc.id);
+                }}
+                onClearSearch={() => setSearchQuery('')}
               />
             </div>
           )}
@@ -401,17 +437,23 @@ export default function App() {
       {selectedCategoryModal && (
         <ProcedureModal
           category={selectedCategoryModal}
-          procedures={procedures.filter(
-            (p) => p.categoryId === selectedCategoryModal.id || p.categoryName === selectedCategoryModal.name
-          ).concat(
-            // Fallback sample list if specific category has no procedures in initial mock array
-            SAMPLE_PROCEDURES
-          ).slice(0, 4)}
-          onClose={() => setSelectedCategoryModal(null)}
+          procedures={(() => {
+            const catProcs = procedures.filter(
+              (p) => p.categoryId === selectedCategoryModal.id || p.categoryName === selectedCategoryModal.name
+            );
+            if (catProcs.length > 0) return catProcs;
+            return SAMPLE_PROCEDURES;
+          })()}
+          onClose={() => {
+            setSelectedCategoryModal(null);
+            setSelectedInitialProcedureIdModal(null);
+          }}
           onStartSubmission={(proc) => {
             setProcedureToSubmit(proc);
             setSelectedCategoryModal(null);
+            setSelectedInitialProcedureIdModal(null);
           }}
+          initialProcedureId={selectedInitialProcedureIdModal}
         />
       )}
 
